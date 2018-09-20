@@ -93,7 +93,7 @@ public class Code extends JFrame implements GLEventListener, KeyListener, MouseW
 	     myCanvas = new GLCanvas();
 		 myCanvas.addGLEventListener(this);
 		 myCanvas.setFocusable(true);
-	     myCanvas.addKeyListener((java.awt.event.KeyListener) this);
+	     //myCanvas.addKeyListener(this);
 	     myCanvas.addMouseWheelListener(this);
 		 this.add(myCanvas);
 		 setVisible(true);
@@ -132,15 +132,16 @@ public class Code extends JFrame implements GLEventListener, KeyListener, MouseW
 	public void keyPressed(KeyEvent e) {
 		System.out.println("keyPressed");
 		
+		
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e) {
+		System.out.println("keyReleased");
 		if(e.getKeyCode()== KeyEvent.VK_C) {
 	         if( colorType == 0)
 	            colorType = 1;
 		}
-	}
-
-	@Override
-	public void keyReleased(KeyEvent arg0) {
-		
 	}
 
 	public void display(GLAutoDrawable drawable) {
