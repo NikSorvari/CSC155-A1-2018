@@ -1,9 +1,6 @@
 
 import java.nio.*;
 import javax.swing.*;
-import javax.swing.JPanel;
-import javax.swing.JButton;
-import javax.swing.JFrame;
 
 import com.jogamp.newt.event.KeyEvent;
 import com.jogamp.newt.event.KeyListener;
@@ -41,7 +38,7 @@ public class Code extends JFrame implements GLEventListener, KeyListener, MouseW
 	private float y = 0.0f;
 	private float inc = 0.01f; // vertical movement speed
 	private float size;
-	private int angle;
+	private float angle = 0f;
 	private int motionType = 0; // movement style (vertical or circle)
 	private int sizeChange = 0; // flag to signal user's change in the triangle size
 	private int colorType = 0;    // triangle color (solid blue or rgb gradient)
@@ -65,6 +62,24 @@ public class Code extends JFrame implements GLEventListener, KeyListener, MouseW
 		topPanel.add(bCircle);
 		topPanel.add(bVertical);
 		
+		// get the content pane of the JFrame (this)
+		JComponent contentPane = (JComponent) this.getContentPane();
+		// get the "focus is in the window" input map for the content pane
+		int mapName = JComponent.WHEN_IN_FOCUSED_WINDOW;
+		InputMap imap = contentPane.getInputMap(mapName);
+		// create a keystroke object to represent the "c" key
+		KeyStroke cKey = KeyStroke.getKeyStroke('c');
+		// put the "cKey" keystroke object into the content pane’s "when focus is
+		// in the window" input map under the identifier name "color“
+		imap.put(cKey, "color");
+		// get the action map for the content pane
+		ActionMap amap = contentPane.getActionMap();
+		ColorChange myCommand = new ColorChange();
+		// put the "myCommand" command object into the content pane's action map
+		amap.put("color", myCommand);
+		//have the JFrame request keyboard focus
+		this.requestFocus();
+		
 		 //button for vertical movement
 	     bVertical.addActionListener(
 	     new ActionListener()
@@ -73,6 +88,9 @@ public class Code extends JFrame implements GLEventListener, KeyListener, MouseW
 	         {
 	    		 System.out.println("Vertical");
 	             motionType = 1;
+	             x=0.0f;
+	             y=0.0f;
+	             angle=0f;
 	             myCanvas.requestFocus();
 	         }
 	     });
@@ -85,6 +103,9 @@ public class Code extends JFrame implements GLEventListener, KeyListener, MouseW
 	         {
 	             System.out.println("Circle");
 	             motionType = 2;
+	             x=0.0f;
+	             y=0.0f;
+	             angle=0f;
 	             myCanvas.requestFocus();
 	         }
 	     });
@@ -93,7 +114,6 @@ public class Code extends JFrame implements GLEventListener, KeyListener, MouseW
 	     myCanvas = new GLCanvas();
 		 myCanvas.addGLEventListener(this);
 		 myCanvas.setFocusable(true);
-	     //myCanvas.addKeyListener(this);
 	     myCanvas.addMouseWheelListener(this);
 		 this.add(myCanvas);
 		 setVisible(true);
@@ -125,6 +145,8 @@ public class Code extends JFrame implements GLEventListener, KeyListener, MouseW
 	      
 	      sizeChange = 1;
 	      
+	      
+		
 	      myCanvas.requestFocus();
 		
 	}
@@ -140,13 +162,49 @@ public class Code extends JFrame implements GLEventListener, KeyListener, MouseW
 		System.out.println("keyReleased");
 		if(e.getKeyCode()== KeyEvent.VK_C) {
 	         if( colorType == 0)
+	         {
 	            colorType = 1;
+	            System.out.println("colorChange");
+	         }
 		}
 	}
 
 	public void display(GLAutoDrawable drawable) {
+		
 		GL4 gl = (GL4) GLContext.getCurrentGL();
 		gl.glUseProgram(rendering_program);
+		
+		float bkg[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+		FloatBuffer bkgBuffer = Buffers.newDirectFloatBuffer(bkg);
+		gl.glClearBufferfv(GL_COLOR, 0, bkgBuffer);
+		
+		if (motionType == 1)
+		{
+			if (y < -1.0f)
+				inc= 0.01f;
+			if(y > 1.0f)
+				inc= -0.01f;
+			
+			y+=inc;
+			
+			int offset_loc = gl.glGetUniformLocation(rendering_program, "inc");
+			gl.glProgramUniform1f(rendering_program, offset_loc, y);
+			
+		}
+		if (motionType == 2)
+		{
+			angle += 0.1;
+			x = (float) Math.cos(angle)/2;
+			y = (float) Math.sin(angle)/2;
+			
+			int offset_loc = gl.glGetUniformLocation(rendering_program, "x");
+			gl.glProgramUniform1f(rendering_program, offset_loc, x);
+			int offset_loc2 = gl.glGetUniformLocation(rendering_program, "y");
+			gl.glProgramUniform1f(rendering_program, offset_loc2, y);
+		}
+		
+		int offset_loc = gl.glGetUniformLocation(rendering_program, "size");
+	    gl.glProgramUniform1f(rendering_program, offset_loc, size);
 		gl.glDrawArrays(GL_TRIANGLES,0,3);
 		
 	}
