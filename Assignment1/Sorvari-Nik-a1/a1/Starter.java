@@ -38,7 +38,7 @@ public class Starter extends JFrame implements GLEventListener, KeyListener, Mou
 	private float y = 0.0f;
 	private float inc = 0.01f; // vertical movement speed
 	private static float cf = 0;
-	private float size;
+	private float size= 0;
 	private float angle = 0f;
 	private int motionType = 0; // movement style (vertical or circle)
 	private int sizeChange = 0; // flag to signal user's change in the triangle size
@@ -151,15 +151,12 @@ public class Starter extends JFrame implements GLEventListener, KeyListener, Mou
 	      else if(e.getWheelRotation() == -1) {
 	         size = size - 0.05f;
 	      }
-	      if(size < 0.05f) {
-	         size = 0.05f;
+	      if(size < -0.2f) {
+	         size = -0.2f;
 	      }
-	      if(size > 1.0f) {
-	         size = 1.0f;
+	      if(size > 0.4f) {
+	         size = 0.4f;
 	      }
-	      
-	      sizeChange = 1;
-	      
 	      
 		
 	      myCanvas.requestFocus();
@@ -230,7 +227,7 @@ public class Starter extends JFrame implements GLEventListener, KeyListener, Mou
 		{
 			angle += 0.1;
 			x = (float) Math.cos(angle)/2;
-			y = (float) Math.sin(angle)/3;
+			y = (float) Math.sin(angle)/2;
 			
 			
 		}
