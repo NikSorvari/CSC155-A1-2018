@@ -1,3 +1,5 @@
+package a1;
+
 import static com.jogamp.opengl.GL2ES2.GL_FRAGMENT_SHADER;
 import static com.jogamp.opengl.GL2ES2.GL_VERTEX_SHADER;
 import static com.jogamp.opengl.GL2ES3.GL_COLOR;
@@ -22,20 +24,15 @@ public class ColorChange extends AbstractAction implements GLEventListener {
 	private int vao[] = new int[1];
 	private GLSLUtils util = new GLSLUtils();
 	
-	float cf = 0;
+	private float cf = 0;
 
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
-		if(cf == 0.0f) {
-			cf = 1.0f;
-         } else {
-        	 cf = 0.0f;
-}
-		System.out.println(cf);
 		
-		
-		
+		Starter.setColor();
 	}
+
+
 
 	@Override
 	public void init(GLAutoDrawable drawable) {
@@ -49,8 +46,8 @@ public class ColorChange extends AbstractAction implements GLEventListener {
 	private int createShaderProgram() {
 		GL4 gl = (GL4) GLContext.getCurrentGL();
 
-		String vshaderSource[] = util.readShaderSource("a1/vert.shader");
-		String fshaderSource[] = util.readShaderSource("a1/frag.shader");
+		String vshaderSource[] = util.readShaderSource("vert.shader");
+		String fshaderSource[] = util.readShaderSource("frag.shader");
 		int lengths[];
 
 		int vShader = gl.glCreateShader(GL_VERTEX_SHADER);
@@ -77,13 +74,8 @@ public class ColorChange extends AbstractAction implements GLEventListener {
 
 	@Override
 	public void display(GLAutoDrawable drawable) {
-		GL4 gl = (GL4) GLContext.getCurrentGL();
 		
 		
-		int offset_loc = gl.glGetUniformLocation(rendering_program, "cf");
-        gl.glProgramUniform1f(rendering_program, offset_loc, cf);
-      
-        gl.glDrawArrays(GL_TRIANGLES,0,3);
 		
 	}
 
